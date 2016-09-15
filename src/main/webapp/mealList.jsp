@@ -32,28 +32,32 @@
 
 <table>
     <tr>
-        <th width="20%">Дата</th><th width="40%">Еда</th><th width="20%">Калории</th>
+        <th width="20%">Дата</th><th width="40%">Еда</th><th width="20%">Калории</th><th></th><th></th>
     </tr>
     <c:forEach var="meal" items="${meallist}">
         <c:set var="st" value="normal"></c:set>
         <c:if test="${meal.exceed}" >
            <c:set var="st" value="exceeded"></c:set>
         </c:if>
-        <tr>
-            <td class=${st}>
+        <tr class=${st}>
+            <td >
                 <div>${meal.getDate()} : ${meal.getTime()}</div>
             </td>
-            <td class=${st}>
+            <td>
                 <div><c:out value="${meal.description}"/></div>
             </td>
-            <td class=${st}>
+            <td>
                 <div><c:out value="${meal.calories}"/></div>
 
             </td>
-
+            <td>Update</td>
+            <td>Delete</td>
         </tr>
 
     </c:forEach>
+
+    <div>Create</div>
+
 
 </table>
 
