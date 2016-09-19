@@ -45,7 +45,24 @@
                 <td><a href="meals?action=delete&id=${meal.id}">Delete</a></td>
             </tr>
         </c:forEach>
+
+
     </table>
+    <div>
+
+        <form method="post" action="meals">
+            <input type="hidden" name="act" value="filter">
+            <dl>
+                <dt>DateTime Begin:</dt>
+                <dd><input type="datetime-local" value="" name="dateTimeBegin"></dd>
+            </dl>
+            <dl>
+                <dt>DateTime End:</dt>
+                <dd><input type="datetime-local" value="" name="dateTimeEnd"></dd>
+            </dl>
+            <button type="submit">Filter</button>
+        </form>
+    </div>
 </section>
 </body>
 </html>

@@ -23,20 +23,22 @@ public class MealRestController {
 
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    public List<MealWithExceed> getAll() {
+    public List<MealWithExceed> getAll(int userId) {
         LOG.info("getAll");
-        return MealsUtil.getWithExceeded(service.getAll(), MealsUtil.DEFAULT_CALORIES_PER_DAY); //get from profile
+        return MealsUtil.getWithExceeded(service.getAll(userId), MealsUtil.DEFAULT_CALORIES_PER_DAY); //get from profile
     }
 
-    public Meal get(int id) {
+    public Meal get(int id, int userId) {
         LOG.info("getId " + id);
-        return service.get(id);
+        return service.get(id,userId);
     }
 
-//Проверьте корректную обработку пустых значений date и time в контроллере
-    public List<MealWithExceed> getFilteredByTime(LocalTime startTime, LocalTime endtTime) {
+    //Проверьте корректную обработку пустых значений date и time в контроллере
+    public List<MealWithExceed> getFilteredByTime(LocalTime startTime, LocalTime endTime, int userId) {
         LOG.info("getFiltered ");
-        return MealsUtil.getFilteredWithExceeded(service.getAll(), startTime, endtTime, MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        if (startTime!= null && endTime!= null){
+        return MealsUtil.getFilteredWithExceeded(service.getAll(userId), startTime, endTime, MealsUtil.DEFAULT_CALORIES_PER_DAY);}
+        return getAll(userId);
     }
 /*
 
@@ -47,20 +49,20 @@ public class MealRestController {
 */
 
 
-    public void delete(int id) {
+    public void delete(int id, int userId) {
         LOG.info("delId " + id);
-        service.delete(id);
+        service.delete(id,userId);
     }
 
-    public void create(Meal meal) {
+    public void create(Meal meal, int userId) {
         LOG.info("create ");
-        service.create(meal);
+        service.update(meal,userId);
     }
 
 
-    public void update(Meal meal) {
-        LOG.info("update " );
-        service.update(meal);
+    public void update(Meal meal, int userId) {
+        LOG.info("update ");
+        service.update(meal,userId);
     }
 
 

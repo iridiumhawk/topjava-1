@@ -8,6 +8,16 @@ import ru.javawebinar.topjava.util.MealsUtil;
  */
 public class AuthorizedUser {
 
+    public static Integer id;
+
+/*    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }*/
+
     public static int id() {
         return 1;
     }

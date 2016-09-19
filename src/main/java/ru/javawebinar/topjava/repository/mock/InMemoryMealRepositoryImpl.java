@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.repository.mock;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
@@ -23,36 +24,46 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     private AtomicInteger counter = new AtomicInteger(0);
 
 
-
     {
-        MealsUtil.MEALS.forEach(this::save);
+        MealsUtil.MEALS.forEach(meal -> save(meal, 1));
     }
 
     @Override
-    public Meal save(Meal meal) {
+    public Meal save(Meal meal, int userId) {
+
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
+            meal.setUserId(userId);
         }
-        repository.put(meal.getId(), meal);
-        return meal;
+
+        if (meal.getUserId() == userId) {
+            repository.put(meal.getId(), meal);
+            return meal;
+        }
+
+        return null;
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean delete(int id, int userId) {
 
-        return repository.remove(id)!=null ;
+        return repository.get(id).getUserId() == userId && repository.remove(id) != null;
+
     }
 
     @Override
-    public Meal get(int id) {
-        return repository.get(id);
+    public Meal get(int id, int userId) {
+        Meal meal = repository.get(id);
+        if (meal.getUserId() == userId) {
+            return meal;
+        } else return null;
     }
 
 
-
     @Override
-    public Collection<Meal> getAll() {
-        return repository.values().stream().sorted((o1, o2) -> o1.getDateTime().compareTo(o2.getDateTime())).collect(Collectors.toList()); //reverse?
+    public Collection<Meal> getAll(int userId) { //фильтровать по userid
+        return repository.values().stream().filter(meal -> meal.getUserId() == userId).
+                sorted((o1, o2) -> o1.getDateTime().compareTo(o2.getDateTime())).collect(Collectors.toList()); //reverse?
     }
 }
 

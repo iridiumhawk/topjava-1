@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -20,39 +19,41 @@ public class MealServiceImpl implements MealService {
     private MealRepository repository;
 
     @Override
-    public List<Meal> getAll() {
-        return (List) repository.getAll(); //check
+    public List<Meal> getAll(int userId) {
+        return (List<Meal>) repository.getAll(userId); //check
 
     }
 
     @Override
-    public Meal get(int id) throws NotFoundException {
-        if (AuthorizedUser.id() == 1) {
-            return repository.get(id);
+    public Meal get(int id, int userId) throws NotFoundException {
+        Meal meal = repository.get(id, userId);
+        if (meal != null) {
+            return meal;
         } else throw new NotFoundException("not authorized access");
 
     }
 
     @Override
-    public void delete(int id) throws NotFoundException {
-        if (AuthorizedUser.id() == 1) {
-            repository.delete(id);
-        } else throw new NotFoundException("not authorized access");
-    }
-
-    @Override
-    public void update(Meal meal) {
-        if (AuthorizedUser.id() == 1) {
-            repository.save(meal);
-        } else throw new NotFoundException("not authorized access");
+    public void delete(int id, int userId) throws NotFoundException {
+        if (!repository.delete(id, userId)) {
+            throw new NotFoundException("not authorized access");
+        }
 
     }
 
     @Override
-    public void create(Meal meal) {
-        if (AuthorizedUser.id() == 1) {
-            repository.save(meal);
-        } else throw new NotFoundException("not authorized access");
+    public void update(Meal meal, int userId) {
+        if (repository.save(meal, userId) == null){
+            throw new NotFoundException("not authorized access");
+        }
+
     }
+
+/*    @Override
+    public void create(Meal meal, int userId) {
+        if (AuthorizedUser.id() == 1) {
+            repository.save(meal, userId);
+        } else throw new NotFoundException("not authorized access");
+    }*/
 }
 /*AuthorizedUser известен только на слое web (MealService можно тестировать без подмены логики авторизации), принимаем в методах сервиса и репозитория параметр userId: id владельца еды.*/
