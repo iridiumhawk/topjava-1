@@ -29,14 +29,14 @@ public class MealServiceImpl implements MealService {
         Meal meal = repository.get(id, userId);
         if (meal != null) {
             return meal;
-        } else throw new NotFoundException("not authorized access");
+        } else throw new NotFoundException("get not authorized access");
 
     }
 
     @Override
     public void delete(int id, int userId) throws NotFoundException {
         if (!repository.delete(id, userId)) {
-            throw new NotFoundException("not authorized access");
+            throw new NotFoundException("delete not authorized access");
         }
 
     }
@@ -44,7 +44,7 @@ public class MealServiceImpl implements MealService {
     @Override
     public void update(Meal meal, int userId) {
         if (repository.save(meal, userId) == null){
-            throw new NotFoundException("not authorized access");
+            throw new NotFoundException("update not authorized access");
         }
 
     }

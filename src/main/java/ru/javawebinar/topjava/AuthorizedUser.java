@@ -8,18 +8,18 @@ import ru.javawebinar.topjava.util.MealsUtil;
  */
 public class AuthorizedUser {
 
-    public static Integer id;
+    private static Integer id = 0;
 
 /*    public Integer getId() {
         return id;
     }
+*/
+    public static void setId(int userId) {
+        id = userId;
+    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }*/
-
-    public static int id() {
-        return 1;
+    public static int getId() {
+        return id;
     }
 
     public static int getCaloriesPerDay() {

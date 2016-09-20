@@ -50,17 +50,27 @@
     </table>
     <div>
 
+
         <form method="post" action="meals">
             <input type="hidden" name="act" value="filter">
             <dl>
-                <dt>DateTime Begin:</dt>
-                <dd><input type="datetime-local" value="" name="dateTimeBegin"></dd>
+                <dt>From date:</dt>
+
+                <dd><input type="date" value="" name="fromDate"></dd>
+                <dt>To date:</dt>
+
+                <dd><input type="date" value="" name="toDate"></dd>
             </dl>
             <dl>
-                <dt>DateTime End:</dt>
-                <dd><input type="datetime-local" value="" name="dateTimeEnd"></dd>
+                <dt>From  time:</dt>
+
+                <dd><input type="time" value="" name="timeBegin"></dd>
+                <dt>To time:</dt>
+
+                <dd><input type="time" value="" name="timeEnd"></dd>
             </dl>
-            <button type="submit">Filter</button>
+            <button type="submit" name="state" value="ok">Filter</button>
+            <button type="submit" name="state" value="reset">Reset</button>
         </form>
     </div>
 </section>

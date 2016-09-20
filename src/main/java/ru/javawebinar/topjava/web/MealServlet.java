@@ -60,10 +60,20 @@ public class MealServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        Integer userId = 1;
-//        AuthorizedUser.id;
+        Integer userId =  AuthorizedUser.getId();
 
         String act = request.getParameter("act");
+
+        if (act.equals("login")) {
+            LOG.info("login");
+            userId = Integer.parseInt(request.getParameter("userId"));
+            AuthorizedUser.setId(userId);
+            response.sendRedirect("meals");
+            /*
+            request.setAttribute("mealList",
+                    mealController.getAll(userId));
+            request.getRequestDispatcher("/mealList.jsp").forward(request, response);*/
+        }
 
         if (act.equals("save")) {
 
@@ -80,23 +90,29 @@ public class MealServlet extends HttpServlet {
             mealController.create(meal, userId);
             response.sendRedirect("meals");
 
-        } else if (act.equals("filter")) {
+        }
+
+        if (act.equals("filter")) {
             LOG.info("filter");
+            LocalTime beginTime = !request.getParameter("timeBegin").equals("") ? LocalTime.parse(request.getParameter("timeBegin")) : LocalTime.MIN ;
+
+            LocalTime endTime = !request.getParameter("timeEnd").equals("")  ? LocalTime.parse(request.getParameter("timeEnd")) : LocalTime.MAX;
+
             request.setAttribute("mealList",
-                    mealController.getFilteredByTime(LocalTime.parse(request.getParameter("dateTimeBegin").replace('T',' '), TimeUtil.DATE_TME_FORMATTER_T), LocalTime.parse(request.getParameter("dateTimeEnd").replace('T',' '), TimeUtil.DATE_TME_FORMATTER_T), userId));
+                    mealController.getFilteredByTime(beginTime,endTime, userId));
 
             request.getRequestDispatcher("/mealList.jsp").forward(request, response);
 
-            response.sendRedirect("meals");
+//            response.sendRedirect("meals");
         }
+
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
 
-        Integer userId = 1;
-//                AuthorizedUser.id; //заменить на дроп даун
+        Integer userId = AuthorizedUser.getId();
 
         if (action == null) {
             LOG.info("getAll");

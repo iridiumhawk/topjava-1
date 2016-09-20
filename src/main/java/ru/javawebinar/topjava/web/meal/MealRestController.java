@@ -36,7 +36,7 @@ public class MealRestController {
     //Проверьте корректную обработку пустых значений date и time в контроллере
     public List<MealWithExceed> getFilteredByTime(LocalTime startTime, LocalTime endTime, int userId) {
         LOG.info("getFiltered ");
-        if (startTime!= null && endTime!= null){
+        if ( startTime!= null && endTime!= null && startTime.isBefore(endTime)){
         return MealsUtil.getFilteredWithExceeded(service.getAll(userId), startTime, endTime, MealsUtil.DEFAULT_CALORIES_PER_DAY);}
         return getAll(userId);
     }

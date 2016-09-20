@@ -9,7 +9,26 @@
 <hr>
 <ul>
     <li><a href="users">User List</a></li>
-    <li><a href="meals">Meal List</a></li>
+   <!-- <li><a href="meals">Meal List</a></li>-->
+
 </ul>
+<form method="post" action="meals">
+    <input type="hidden" name="act" value="login">
+    <dl>
+        <dt>User:</dt>
+        <dd>
+            <select name="userId">
+
+
+                <option value="1">Admin login</option>
+
+
+                <option value="2">User1 login</option>
+
+            </select>
+        </dd>
+    </dl>
+    <button type="submit">Войти</button>
+</form>
 </body>
 </html>
