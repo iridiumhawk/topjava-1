@@ -6,24 +6,18 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.Role;
-import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.repository.mock.InMemoryMealRepositoryImpl;
-import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.util.MealsUtil;
-import ru.javawebinar.topjava.util.TimeUtil;
+
 import ru.javawebinar.topjava.web.meal.MealRestController;
-import ru.javawebinar.topjava.web.user.AdminRestController;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -45,34 +39,37 @@ public class MealServlet extends HttpServlet {
         appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
         mealController = appCtx.getBean(MealRestController.class);
 //            System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
-
-
 //            adminUserController.create(new User(1, "userName", "email", "password", Role.ROLE_ADMIN));
-
 
     }
 
     @Override
     public void destroy() {
         super.destroy();
+
         appCtx.close();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        Integer userId =  AuthorizedUser.getId();
+        HttpSession session = request.getSession();
+
+
+        int userId = session.getAttribute("userId") == null ? 0 : (Integer)session.getAttribute("userId");
+//                AuthorizedUser.getId();
 
         String act = request.getParameter("act");
 
         if (act.equals("login")) {
             LOG.info("login");
             userId = Integer.parseInt(request.getParameter("userId"));
+
             AuthorizedUser.setId(userId);
+
+            session.setAttribute("userId", userId);
+
             response.sendRedirect("meals");
-            /*
-            request.setAttribute("mealList",
-                    mealController.getAll(userId));
-            request.getRequestDispatcher("/mealList.jsp").forward(request, response);*/
+            return;
         }
 
         if (act.equals("save")) {
@@ -94,12 +91,12 @@ public class MealServlet extends HttpServlet {
 
         if (act.equals("filter")) {
             LOG.info("filter");
-            LocalTime beginTime = !request.getParameter("timeBegin").equals("") ? LocalTime.parse(request.getParameter("timeBegin")) : LocalTime.MIN ;
+            LocalTime beginTime = !request.getParameter("timeBegin").equals("") ? LocalTime.parse(request.getParameter("timeBegin")) : LocalTime.MIN;
 
-            LocalTime endTime = !request.getParameter("timeEnd").equals("")  ? LocalTime.parse(request.getParameter("timeEnd")) : LocalTime.MAX;
+            LocalTime endTime = !request.getParameter("timeEnd").equals("") ? LocalTime.parse(request.getParameter("timeEnd")) : LocalTime.MAX;
 
             request.setAttribute("mealList",
-                    mealController.getFilteredByTime(beginTime,endTime, userId));
+                    mealController.getFilteredByTime(beginTime, endTime, userId));
 
             request.getRequestDispatcher("/mealList.jsp").forward(request, response);
 
@@ -111,8 +108,16 @@ public class MealServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
+        HttpSession session = request.getSession();
 
-        Integer userId = AuthorizedUser.getId();
+        int userId = session.getAttribute("userId") == null ? 0 : (Integer)session.getAttribute("userId"); // null?
+
+//        int userId = AuthorizedUser.getId();
+
+        if (userId == 0) {
+            response.sendRedirect("index.html");
+            return;
+        }
 
         if (action == null) {
             LOG.info("getAll");
