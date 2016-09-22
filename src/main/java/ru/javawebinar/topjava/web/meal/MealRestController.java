@@ -67,8 +67,3 @@ public class MealRestController {
 
 
 }
-/*MealRestController должен уметь обрабатывать запросы:
-Отдать свою еду (для отображения в таблице, формат List<MealWithExceed>), запрос БЕЗ параметров
-Отдать свою еду, отфильтрованную по startDate, startTime, endDate, endTime
-Отдать/удалить свою еду по id, параметр запроса - id еды. Если еда с этим id чужая или отсутствует - NotFoundException
-Сохранить/обновить еду, параметр запроса - Meal. Если обновляемая еда с этим id чужая или отсутствует - NotFoundException*/
