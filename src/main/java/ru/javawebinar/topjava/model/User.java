@@ -20,9 +20,9 @@ public class User extends NamedEntity {
 
     protected Date registered = new Date();
 
-    protected Set<Role> roles;
-
     protected int caloriesPerDay = MealsUtil.DEFAULT_CALORIES_PER_DAY;
+
+    protected Set<Role> roles;
 
     public User() {
     }

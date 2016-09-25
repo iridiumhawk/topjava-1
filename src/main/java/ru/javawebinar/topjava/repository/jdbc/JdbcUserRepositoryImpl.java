@@ -30,6 +30,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+
     private SimpleJdbcInsert insertUser;
 
     @Autowired
@@ -54,12 +55,21 @@ public class JdbcUserRepositoryImpl implements UserRepository {
             Number newKey = insertUser.executeAndReturnKey(map);
             user.setId(newKey.intValue());
         } else {
-            namedParameterJdbcTemplate.update(
-                    "UPDATE users SET name=:name, email=:email, password=:password, " +
-                            "registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id", map);
+
+            if (namedParameterJdbcTemplate.update("UPDATE users SET name=:name, email=:email, password=:password, registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id", map) == 0) {
+                namedParameterJdbcTemplate.update(
+                        "INSERT INTO users (id, name, email, password, registered, enabled, calories_per_day)  VALUES (:id, :name, :email, :password, :registered, :enabled, :caloriesPerDay)", map);
+            }
         }
+
+
+/*        "UPDATE users SET name=:name, email=:email, password=:password, registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id"*/
+        /*VALUES (:id, :name, :email, :password, :registered, :enabled, :caloriesPerDay)
+        }*/
+        // save instead update, in empty table cannot update user
         return user;
     }
+
 
     @Override
     public boolean delete(int id) {
