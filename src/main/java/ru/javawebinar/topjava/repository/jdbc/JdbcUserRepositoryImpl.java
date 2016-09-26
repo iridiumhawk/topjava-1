@@ -62,11 +62,6 @@ public class JdbcUserRepositoryImpl implements UserRepository {
             }
         }
 
-
-/*        "UPDATE users SET name=:name, email=:email, password=:password, registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id"*/
-        /*VALUES (:id, :name, :email, :password, :registered, :enabled, :caloriesPerDay)
-        }*/
-        // save instead update, in empty table cannot update user
         return user;
     }
 
