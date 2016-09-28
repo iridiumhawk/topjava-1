@@ -11,10 +11,10 @@ import ru.javawebinar.topjava.repository.jdbc.JdbcMealRepositoryImpl;
 import ru.javawebinar.topjava.util.DbPopulatorMeal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static ru.javawebinar.topjava.MealTestData.*;
-
 
 
 /**
@@ -43,10 +43,10 @@ public class MealServiceTest {
 
     @Test
     public void testGet() throws Exception {
-        Meal meal = service.get(USER_MEAL_LIST.get(0).getId(),USER_ID);
+        Meal meal = service.get(USER_MEAL_LIST.get(0).getId(), USER_ID);
         MATCHER.assertEquals(USER_MEAL_LIST.get(0), meal);
 
-        Meal mealAdmin = service.get(ADMIN_MEAL_LIST.get(0).getId(),ADMIN_ID);
+        Meal mealAdmin = service.get(ADMIN_MEAL_LIST.get(0).getId(), ADMIN_ID);
         MATCHER.assertEquals(ADMIN_MEAL_LIST.get(0), mealAdmin);
 
     }
@@ -54,50 +54,62 @@ public class MealServiceTest {
 
     @Test
     public void testDelete() throws Exception {
-        service.delete(USER_MEAL_LIST.get(0).getId(),USER_ID);
-        MATCHER.assertCollectionEquals(Arrays.asList(USER_MEAL_LIST.get(1) , USER_MEAL_LIST.get(2) ), service.getAll(USER_ID));
+        service.delete(USER_MEAL_LIST.get(0).getId(), USER_ID);
+        MATCHER.assertCollectionEquals(Arrays.asList(USER_MEAL_LIST.get(1), USER_MEAL_LIST.get(2)), service.getAll(USER_ID));
 
-        service.delete(ADMIN_MEAL_LIST.get(0).getId(),ADMIN_ID);
-        MATCHER.assertCollectionEquals(Arrays.asList(ADMIN_MEAL_LIST.get(1) , ADMIN_MEAL_LIST.get(2) ), service.getAll(ADMIN_ID));
+        service.delete(ADMIN_MEAL_LIST.get(0).getId(), ADMIN_ID);
+        MATCHER.assertCollectionEquals(Arrays.asList(ADMIN_MEAL_LIST.get(1), ADMIN_MEAL_LIST.get(2)), service.getAll(ADMIN_ID));
     }
 
 
     @Test(expected = NotFoundException.class)
     public void testNotFoundDelete() throws Exception {
-        service.delete(1,USER_ID);
-        service.delete(ADMIN_MEAL_LIST.get(0).getId(),USER_ID);
-        service.delete(USER_MEAL_LIST.get(0).getId(),ADMIN_ID);
+        service.delete(1, USER_ID);
+        service.delete(ADMIN_MEAL_LIST.get(0).getId(), USER_ID);
+        service.delete(USER_MEAL_LIST.get(0).getId(), ADMIN_ID);
 
     }
 
-//    @Test
+    //    @Test
     public void testGetBetweenDates() throws Exception {
 
     }
 
-//    @Test
+    //    @Test
     public void testGetBetweenDateTimes() throws Exception {
 
     }
 
     @Test
     public void testGetAll() throws Exception {
-      Collection<Meal> mealList = service.getAll(ADMIN_ID);
+        Collection<Meal> mealList = service.getAll(ADMIN_ID);
         Collection<Meal> resultMeal = new ArrayList<>();
-//        resultMeal.addAll(USER_MEAL_LIST);
         ADMIN_MEAL_LIST.sort(MEAL_COMPARATOR);
         resultMeal.addAll(ADMIN_MEAL_LIST);
-//        resultMeal.stream().sorted (MEAL_COMPARATOR);
         MATCHER.assertCollectionEquals(resultMeal, mealList);
     }
 
     @Test
     public void testUpdate() throws Exception {
+        Meal newMeal = USER_MEAL_LIST.get(0);
+        newMeal.setCalories(333);
+        newMeal.setDescription("Food good");
+
+        service.update(newMeal,USER_ID);
+
+        MATCHER.assertEquals(newMeal, service.get(newMeal.getId(),USER_ID));
 
     }
 
     @Test
     public void testSave() throws Exception {
+        Meal newMeal = new Meal();
+        newMeal.setCalories(111);
+        newMeal.setDescription("Food bad");
+        newMeal.setDateTime(LocalDateTime.now());
 
+        newMeal = service.save(newMeal,USER_ID);
+
+        MATCHER.assertEquals(newMeal, service.get(newMeal.getId(),USER_ID));
     }
 }
