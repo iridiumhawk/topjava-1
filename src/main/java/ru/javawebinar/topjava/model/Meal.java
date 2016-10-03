@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.model;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.constraints.Digits;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -15,16 +16,14 @@ import java.time.LocalTime;
         @NamedQuery(name = "meal.del", query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id=:userId"),
         @NamedQuery(name = "meal.get", query = "SELECT m FROM Meal m WHERE m.id=:id AND m.user.id=:userId"),
         @NamedQuery(name = "meal.getAll", query = "SELECT m FROM Meal m WHERE m.user.id=:userId ORDER BY m.id DESC"),
-    /*    @NamedQuery(name = , query = "SELECT u FROM User u LEFT JOIN FETCH u.roles WHERE u.email=?1"),
-        @NamedQuery(name = User.ALL_SORTED, query = "SELECT u FROM User u LEFT JOIN FETCH u.roles ORDER BY u.name, u.email"),*/
+        @NamedQuery(name = "meal.getBetween", query = "SELECT m FROM Meal m WHERE m.dateTime BETWEEN :startDate AND :endDate AND m.user.id=:userId ORDER BY m.id DESC"),
+
 })
 @Entity
-@Table(name = "meals")
+@Table(name = "meals", uniqueConstraints = @UniqueConstraint(columnNames={"user_id", "date_time"}))
 public class Meal extends BaseEntity {
-//    static final String DELETE = "";
 
     @Column(name="date_time")
-    @NotEmpty
     private LocalDateTime dateTime;
 
     @Column(name="description")
@@ -32,10 +31,12 @@ public class Meal extends BaseEntity {
     private String description;
 
     @Column(name="calories")
-    @NotEmpty
+    @Digits(fraction = 0, integer = 5)
     private int calories;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id", nullable = false)
     private User user;
 
     public Meal() {
