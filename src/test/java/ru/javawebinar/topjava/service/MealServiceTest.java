@@ -1,8 +1,17 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.AfterClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.TestName;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Repeat;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
@@ -13,7 +22,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Arrays;
+import java.util.*;
 
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
@@ -27,21 +36,60 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MealServiceTest.class);
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Rule
+    public TestName name = new TestName();
+
+    private Long testStart;
+    private Long testEnd;
+//    private static List<String> testTimer = new ArrayList<>();
+    private static Map<String, Long> testTimer = new HashMap<>();
+
+
     @Autowired
     protected MealService service;
 
+    @Rule
+    public TestWatcher watcher = new TestWatcher() {
+        @Override
+        protected void starting(Description description) {
+            testStart = System.nanoTime();
+        }
+
+
+        @Override
+        protected void finished(Description description) {
+            testEnd = System.nanoTime();
+//            System.out.printf("Test time: %s msec\n", (testEnd - testStart) / 1000000);
+           /* testTimer.add(String.format("Test name - %s;\t  %s msec\n", name.getMethodName(), (testEnd - testStart) / 1000000));*/
+
+            String mName =name.getMethodName();
+            Long timeResult = (testEnd - testStart) / 1000000;
+            testTimer.put(mName, testTimer.get(mName) != null ? (testTimer.get(mName) + timeResult)/2 : timeResult) ;
+        }
+    };
+
     @Test
+    @Repeat(5)
     public void testDelete() throws Exception {
         service.delete(MealTestData.MEAL1_ID, USER_ID);
         MATCHER.assertCollectionEquals(Arrays.asList(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2), service.getAll(USER_ID));
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
+    @Repeat(5)
+//            (expected = NotFoundException.class)
     public void testDeleteNotFound() throws Exception {
+        thrown.expect(NotFoundException.class);
         service.delete(MEAL1_ID, 1);
     }
 
     @Test
+    @Repeat(5)
     public void testSave() throws Exception {
         Meal created = getCreated();
         service.save(created, USER_ID);
@@ -49,37 +97,56 @@ public class MealServiceTest {
     }
 
     @Test
+    @Repeat(5)
     public void testGet() throws Exception {
         Meal actual = service.get(ADMIN_MEAL_ID, ADMIN_ID);
         MATCHER.assertEquals(ADMIN_MEAL1, actual);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
+    @Repeat(5)
+//            (expected = NotFoundException.class)
     public void testGetNotFound() throws Exception {
+        thrown.expect(NotFoundException.class);
         service.get(MEAL1_ID, ADMIN_ID);
     }
 
     @Test
+    @Repeat(5)
     public void testUpdate() throws Exception {
         Meal updated = getUpdated();
+        LOG.info("update");
         service.update(updated, USER_ID);
+        LOG.info("get");
         MATCHER.assertEquals(updated, service.get(MEAL1_ID, USER_ID));
     }
 
     @Test(expected = NotFoundException.class)
+    @Repeat(5)
     public void testNotFoundUpdate() throws Exception {
         Meal item = service.get(MEAL1_ID, USER_ID);
         service.update(item, ADMIN_ID);
     }
 
     @Test
+    @Repeat(5)
     public void testGetAll() throws Exception {
         MATCHER.assertCollectionEquals(MEALS, service.getAll(USER_ID));
     }
 
     @Test
+    @Repeat(5)
     public void testGetBetween() throws Exception {
         MATCHER.assertCollectionEquals(Arrays.asList(MEAL3, MEAL2, MEAL1),
                 service.getBetweenDates(LocalDate.of(2015, Month.MAY, 30), LocalDate.of(2015, Month.MAY, 30), USER_ID));
+    }
+
+
+    @AfterClass
+    public static void logOut() {
+        System.out.println("\n----------------------");
+        testTimer.forEach((k,v) -> System.out.printf("%-20s %8d\n",k,v));
+        System.out.println("----------------------\n");
+
     }
 }
