@@ -3,5 +3,5 @@ package ru.javawebinar.topjava.service;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles(profiles = {"jpa","hsqldb"})
-public class MealServiceTestJPA extends MealTest{
+public class UserServiceJPATest extends UserTestBase {
 }

@@ -30,13 +30,14 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
-        "classpath:spring/spring-db.xml"
+        "classpath:spring/spring-db.xml",
+
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Sql(scripts = {"classpath:db/populateDB.sql"}, config = @SqlConfig(encoding = "UTF-8"))
-public abstract class MealTest {
+public abstract class MealTestBase {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MealServiceTestJDBC.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MealServiceJDBCTest.class);
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

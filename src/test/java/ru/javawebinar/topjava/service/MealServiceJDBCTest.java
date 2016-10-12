@@ -6,6 +6,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 
 @ActiveProfiles(profiles = {"jdbc","hsqldb"})
-public class MealServiceTestJDBC extends MealTest{
+public class MealServiceJDBCTest extends MealTestBase {
 
 }
