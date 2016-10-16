@@ -5,7 +5,7 @@
 <html>
 <jsp:include page="fragments/headTag.jsp"/>
 <body>
-<h2><a href="index.html">Homeee-123</a></h2>
+<%--<h2><a href="index.jsp">Home</a></h2>--%>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 
 <section>
