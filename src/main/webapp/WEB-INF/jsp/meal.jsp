@@ -3,14 +3,13 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <html>
-<head>
-    <title>Meal</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
+<jsp:include page="fragments/headTag.jsp"/>
 <body>
+<jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
-    <h2><a href="index.html">Home</a></h2>
-    <h3>${param.action == 'create' ? 'Create meal' : 'Edit meal'}</h3>
+    <h2><a href="${pageContext.request.contextPath}/"><fmt:message key="app.home"/></a></h2>
+    <h3><fmt:message key="mealedit.title"/></h3>
+    <h4>${param.action == 'create' ? 'Create meal' : 'Edit meal'}</h4>
     <hr>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
     <form method="post" action="meals">
@@ -31,5 +30,7 @@
         <button onclick="window.history.back()">Cancel</button>
     </form>
 </section>
+<jsp:include page="fragments/footer.jsp"/>
 </body>
+
 </html>
