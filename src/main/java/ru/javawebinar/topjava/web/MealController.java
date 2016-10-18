@@ -60,9 +60,7 @@ public class MealController {
             LocalTime startTime = TimeUtil.parseLocalTime(resetParam("startTime", request));
             LocalTime endTime = TimeUtil.parseLocalTime(resetParam("endTime", request));
             model.addAttribute("meals", mealRestController.getBetween(startDate, startTime, endDate, endTime));
-//            request.setAttribute("meals", mealRestController.getBetween(startDate, startTime, endDate, endTime));
             return "meals";
-//            request.getRequestDispatcher("/meals.jsp").forward(request, response);
         }
 
         return "meals";
@@ -76,28 +74,12 @@ public class MealController {
 
     @RequestMapping(value = "/meals", params = "action=create", method = RequestMethod.GET)
     public String mealCreate(HttpServletRequest request, HttpServletResponse response, Model model) {
-//        String action = request.getParameter("action");
 
-/*        if (action == null) {
-            LOG.info("getAll");
-            request.setAttribute("meals", mealRestController.getAll());
-            request.getRequestDispatcher("/meals.jsp").forward(request, response);
-
-        } else if ("delete".equals(action)) {
-            int id = getId(request);
-            LOG.info("Delete {}", id);
-            mealRestController.delete(id);
-            response.sendRedirect("meals");*/
-
-//        } else if ("create".equals(action) || "update".equals(action)) {
         final Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), "", 1000);
         LOG.info("create {}", meal.getDescription());
 
-//                    mealRestController.get(getId(request));
         model.addAttribute("meal", meal);
         return "meal";
-//        request.getRequestDispatcher("meal.jsp").forward(request, response);
-//        }
     }
 
     @RequestMapping(value = "/meals", params = "action=update", method = RequestMethod.GET)
@@ -109,16 +91,23 @@ public class MealController {
         return "meal";
     }
 
-
-    private int getId(HttpServletRequest request) {
-        String paramId = Objects.requireNonNull(request.getParameter("id"));
-        return Integer.valueOf(paramId);
+    @RequestMapping(value = "/meals", params = "action=delete", method = RequestMethod.GET)
+    public String mealDelete(HttpServletRequest request, HttpServletResponse response, Model model) {
+        mealRestController.delete(getId(request));
+        LOG.info("delete {}", getId(request));
+        return "redirect:meals";
     }
 
+//all
     @RequestMapping(value = "/meals", method = RequestMethod.GET)
     public String getAll(Model model) {
         LOG.info("GetAll");
         model.addAttribute("meals", mealRestController.getAll());
         return "meals";
+    }
+
+    private int getId(HttpServletRequest request) {
+        String paramId = Objects.requireNonNull(request.getParameter("id"));
+        return Integer.valueOf(paramId);
     }
 }
