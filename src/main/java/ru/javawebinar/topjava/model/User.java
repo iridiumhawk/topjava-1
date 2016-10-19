@@ -18,10 +18,29 @@ import java.util.Set;
  * User: gkislin
  * Date: 22.08.2014
  */
+
+@NamedEntityGraphs({
+        @NamedEntityGraph   (name= "graph.User.Roles", attributeNodes = @NamedAttributeNode("roles")),
+        @NamedEntityGraph(name="graph.User.allJoins", attributeNodes = {
+                @NamedAttributeNode("roles"),
+                @NamedAttributeNode("meals")
+        }),
+/*        @NamedEntityGraph(name="graph.User.allJoinsMeals", attributeNodes = {
+                @NamedAttributeNode("id"),
+                @NamedAttributeNode("email"),
+                @NamedAttributeNode("password"),
+                @NamedAttributeNode("enabled"),
+                @NamedAttributeNode("registered"),
+                @NamedAttributeNode("roles"),
+                @NamedAttributeNode("meals")
+        })*/
+})
+
 @NamedQueries({
         @NamedQuery(name = User.DELETE, query = "DELETE FROM User u WHERE u.id=:id"),
-        @NamedQuery(name = User.BY_EMAIL, query = "SELECT u FROM User u LEFT JOIN FETCH u.roles WHERE u.email=?1"),
-        @NamedQuery(name = User.ALL_SORTED, query = "SELECT u FROM User u LEFT JOIN FETCH u.roles ORDER BY u.name, u.email"),
+        @NamedQuery(name = User.BY_EMAIL, query = "SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.roles WHERE u.email=?1"),
+        @NamedQuery(name = User.ALL_SORTED, query = "SELECT DISTINCT u FROM User u  ORDER BY u.name, u.email"),
+//        @NamedQuery(name = User.ALL_SORTED, query = "SELECT u FROM User u LEFT JOIN FETCH u.roles ORDER BY u.name, u.email"),
 })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity

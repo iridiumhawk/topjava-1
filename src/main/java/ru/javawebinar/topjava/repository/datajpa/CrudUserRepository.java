@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.repository.datajpa;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -25,14 +26,16 @@ public interface CrudUserRepository extends JpaRepository<User, Integer> {
     User save(User user);
 
     @Override
+    @EntityGraph(value = "graph.User.Roles", type = EntityGraph.EntityGraphType.FETCH)
     User findOne(Integer id);
 
     @Override
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.roles ORDER BY u.name, u.email")
+    @Query("SELECT distinct u FROM User u LEFT JOIN FETCH u.roles ORDER BY u.name, u.email")
     List<User> findAll();
 
     User getByEmail(String email);
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.meals WHERE u.id = ?1")
+    @Query("SELECT  u FROM User u LEFT JOIN FETCH u.meals WHERE u.id = ?1")
+    @EntityGraph(value = "graph.User.allJoins", type = EntityGraph.EntityGraphType.FETCH)
     User getWithMeals(int id);
 }

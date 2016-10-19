@@ -1,14 +1,20 @@
 package ru.javawebinar.topjava.repository.jpa;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: gkislin
@@ -17,6 +23,7 @@ import java.util.List;
 @Repository
 @Transactional(readOnly = true)
 public class JpaUserRepositoryImpl implements UserRepository {
+    private static final Logger LOG = LoggerFactory.getLogger(JpaUserRepositoryImpl.class);
 
 /*
     @Autowired
@@ -29,6 +36,7 @@ public class JpaUserRepositoryImpl implements UserRepository {
 
     @PersistenceContext
     private EntityManager em;
+
 
     @Override
     @Transactional
@@ -43,7 +51,15 @@ public class JpaUserRepositoryImpl implements UserRepository {
 
     @Override
     public User get(int id) {
-        return em.find(User.class, id);
+
+        EntityGraph graph = em.getEntityGraph("graph.User.Roles");
+        Map hints = Collections.singletonMap("javax.persistence.fetchgraph", graph);
+
+//        hints.put("javax.persistence.fetchgraph", graph);
+
+        return em.find(User.class, id, hints);
+
+//        return em.find(User.class, id);
     }
 
     @Override
@@ -67,6 +83,12 @@ public class JpaUserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> getAll() {
-        return em.createNamedQuery(User.ALL_SORTED, User.class).getResultList();
+        EntityGraph graph = em.getEntityGraph("graph.User.Roles");
+        List<User> users =
+                em.createNamedQuery(User.ALL_SORTED, User.class).
+                        setHint("javax.persistence.fetchgraph", graph).
+        getResultList();
+        LOG.info("getAll {}", users.toString());
+        return users;
     }
 }
