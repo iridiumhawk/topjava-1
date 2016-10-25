@@ -45,7 +45,7 @@ public class RootControllerTest extends AbstractControllerTest {
                 .andExpect(model().attribute("meals", hasSize(6)))
                 .andExpect(model().attribute("meals", hasItem(
                         allOf(
-                                hasProperty("id", is(MealTestData.MEAL1_ID)),
+                                hasProperty("id", is(MealTestData.USER_MEAL1_ID)),
                                 hasProperty("description", is(MEAL1.getDescription()))
                         )
                         )

@@ -20,14 +20,14 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
 
     @Test
     public void testDelete() throws Exception {
-        service.delete(MEAL1_ID, USER_ID);
+        service.delete(USER_MEAL1_ID, USER_ID);
         MATCHER.assertCollectionEquals(Arrays.asList(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2), service.getAll(USER_ID));
     }
 
     @Test
     public void testDeleteNotFound() throws Exception {
         thrown.expect(NotFoundException.class);
-        service.delete(MEAL1_ID, 1);
+        service.delete(USER_MEAL1_ID, 1);
     }
 
     @Test
@@ -46,21 +46,21 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
     @Test
     public void testGetNotFound() throws Exception {
         thrown.expect(NotFoundException.class);
-        service.get(MEAL1_ID, ADMIN_ID);
+        service.get(USER_MEAL1_ID, ADMIN_ID);
     }
 
     @Test
     public void testUpdate() throws Exception {
         Meal updated = getUpdated();
         service.update(updated, USER_ID);
-        MATCHER.assertEquals(updated, service.get(MEAL1_ID, USER_ID));
+        MATCHER.assertEquals(updated, service.get(USER_MEAL1_ID, USER_ID));
     }
 
     @Test
     public void testNotFoundUpdate() throws Exception {
-        Meal item = service.get(MEAL1_ID, USER_ID);
+        Meal item = service.get(USER_MEAL1_ID, USER_ID);
         thrown.expect(NotFoundException.class);
-        thrown.expectMessage("Not found entity with id=" + MEAL1_ID);
+        thrown.expectMessage("Not found entity with id=" + USER_MEAL1_ID);
         service.update(item, ADMIN_ID);
     }
 
