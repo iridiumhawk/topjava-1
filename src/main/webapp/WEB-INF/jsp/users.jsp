@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="webjars/datatables/1.10.12/css/jquery.dataTables.min.css">
 
 <body>
-<h2><a href="index.html">Homeee-123</a></h2>
+<h2><a href="index.html">Home</a></h2>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 
 <div class="jumbotron">
